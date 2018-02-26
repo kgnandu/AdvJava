@@ -34,7 +34,7 @@ public class StudentDAO {
 		
 		//Student newStudent = new Student(newId, student.getName(), student.getStatus());
 		Student newStudent = new StudentBuilder().name(student.getName())
-				.status(student.getStatus()).build();
+				.status(student.getStatus()).id(newId).build();
 		
 		students.add(newStudent);
 		

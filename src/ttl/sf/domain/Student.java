@@ -1,13 +1,42 @@
 package ttl.sf.domain;
 
-public class Student {
+public class Student implements Comparable<Student>{
 
 	private int id;
 	private String name;
 	private Status status;
 
 	public enum Status {
-		PART_TIME, FULL_TIME, HIBERNATING
+		PART_TIME("PartTime", 10), 
+		FULL_TIME("FullTime", 25),
+		HIBERNATING("Hibernating", 34);
+	
+		private String prettyName;
+		private int dbCode;
+
+		Status(String prettyName, int dbCode) {
+			this.prettyName = prettyName;
+			this.dbCode = dbCode;
+		}
+		
+		public String toString() {
+			return prettyName;
+		}
+		
+		public static Status fromPretty(String pretty) {
+			for(Status status : values()) {
+				if(status.prettyName.equals(pretty)) {
+					return status;
+				}
+			}
+			
+			throw new IllegalArgumentException("No Status found for " + pretty);
+		}
+		
+		public int getDbCode() {
+			return dbCode;
+		}
+			
 	}
 
 	private Student(int id, String name, Status status) {
@@ -18,10 +47,6 @@ public class Student {
 
 	public Student(String name, Status status) {
 		this(-1, name, status);
-	}
-
-	public Student(String name, String status) {
-		this(-1, name, Status.valueOf(status));
 	}
 
 	public Student() {
@@ -86,5 +111,10 @@ public class Student {
 			}
 			return new Student(id, name, status);
 		}
+	}
+
+	@Override
+	public int compareTo(Student other) {
+		return this.id - other.id;
 	}
 }

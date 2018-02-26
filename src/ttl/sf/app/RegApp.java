@@ -1,5 +1,7 @@
 package ttl.sf.app;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ttl.sf.domain.Student;
@@ -8,21 +10,55 @@ import ttl.sf.service.StudentService;
 public class RegApp {
 
 	public static void main(String[] args) {
+		RegApp ra = new RegApp();
+		ra.go();
+	}
+
+	public void go() {
 		StudentService studentService = new StudentService();
-		
+
 		List<Student> students = studentService.getAllStudents();
-		
+
+		// Collections.sort(students);
+
+		NameComparator nc = new NameComparator();
+
+		// Collections.sort(students, nc);
+		Collections.sort(students, new Comparator<Student>() {
+			@Override
+			public int compare(Student first, Student second) {
+				return first.getName().compareTo(second.getName());
+			}
+		});
+
+		Collections.sort(students, (first, second) -> first.getName().compareTo(second.getName()));
+
+		Collections.sort(students, (first, second) -> first.getStatus().compareTo(second.getStatus()));
+
 		students.forEach(s -> System.out.println(s));
 		
-		Student one = studentService.getStudent(1);
-		System.out.println("one is " + one);
-		
-		String name = "Joe";
-		Student.Status status = Student.Status.FULL_TIME;
-		Student student = new Student(name, status);
+		sort("hello", (s) -> s.length());
+	}
 
-		studentService.addStudent(student);
-		
-		System.out.println(studentService.getAllStudents());
+	
+	public void sort(String input, MyInterface mi) {
+		int result = mi.doStuff(input);
+		System.out.println(result);
+	}
+
+	
+	@FunctionalInterface
+	public interface MyInterface
+	{
+		public int doStuff(String s);
+	}
+
+	public class NameComparator implements Comparator<Student> {
+
+		@Override
+		public int compare(Student first, Student second) {
+			return first.getName().compareTo(second.getName());
+		}
+
 	}
 }
