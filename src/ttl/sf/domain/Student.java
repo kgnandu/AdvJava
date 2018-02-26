@@ -5,23 +5,12 @@ public class Student {
 	private int id;
 	private String name;
 	private Status status;
-	
+
 	public enum Status {
-		PART_TIME(2),
-		FULL_TIME(20),
-		HIBERNATING(-144);
-		
-		private int code;
-		Status(int code) {
-			this.code = code;
-		}
-		
-		public int getCode() {
-			return code;
-		}
+		PART_TIME, FULL_TIME, HIBERNATING
 	}
 
-	public Student(int id, String name, Status status) {
+	private Student(int id, String name, Status status) {
 		this.id = id;
 		this.name = name;
 		this.status = status;
@@ -43,7 +32,6 @@ public class Student {
 		return id;
 	}
 
-
 	public String getName() {
 		return name;
 	}
@@ -57,7 +45,6 @@ public class Student {
 		return "Student [id=" + id + ", name=" + name + ", status=" + status + "]";
 	}
 
-	
 	private void setId(int id) {
 		this.id = id;
 	}
@@ -68,5 +55,36 @@ public class Student {
 
 	private void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public static class StudentBuilder {
+		private int id = -1;
+		private String name;
+		private Status status;
+		
+		public StudentBuilder name(String name) {
+			this.name = name;
+			
+			return this;
+		}
+
+		public StudentBuilder status(Status status) {
+			this.status = status;
+			
+			return this;
+		}
+
+		public StudentBuilder id(int id) {
+			this.id = id;
+			
+			return this;
+		}
+		
+		public Student build() {
+			if(id == -1) {
+				throw new RuntimeException("id has to be set");
+			}
+			return new Student(id, name, status);
+		}
 	}
 }

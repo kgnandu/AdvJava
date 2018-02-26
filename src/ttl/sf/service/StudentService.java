@@ -17,8 +17,8 @@ public class StudentService {
 		return dao.selectAll();
 	}
 	
-	public Student addStudent(String name, Student.Status status) {
-		Student student = new Student(name, status);
+	public Student addStudent(Student student) {
+
 		student = dao.insert(student);
 		
 		return student;

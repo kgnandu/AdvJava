@@ -13,5 +13,16 @@ public class RegApp {
 		List<Student> students = studentService.getAllStudents();
 		
 		students.forEach(s -> System.out.println(s));
+		
+		Student one = studentService.getStudent(1);
+		System.out.println("one is " + one);
+		
+		String name = "Joe";
+		Student.Status status = Student.Status.FULL_TIME;
+		Student student = new Student(name, status);
+
+		studentService.addStudent(student);
+		
+		System.out.println(studentService.getAllStudents());
 	}
 }

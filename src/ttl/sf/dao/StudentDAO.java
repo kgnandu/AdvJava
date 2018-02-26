@@ -2,13 +2,16 @@ package ttl.sf.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ttl.sf.domain.Student;
+import ttl.sf.domain.Student.StudentBuilder;
 
 public class StudentDAO {
 	
 	private List<Student> students = new ArrayList<>();
-	private static int nextId = 0;
+	//private static int nextId = 0;
+	private static AtomicInteger nextId = new AtomicInteger(0);
 	
 	public StudentDAO() {
 
@@ -23,26 +26,19 @@ public class StudentDAO {
 
 		student = new Student("Roshan", Student.Status.PART_TIME);
 		insert(student);
-
-		student = new Student("Johnny", Student.Status.PART_TIME);
-		insert(student);
-
-		student = new Student("Madhu", Student.Status.FULL_TIME);
-		insert(student);
-
-		student = new Student("Charlene", Student.Status.HIBERNATING);
-		insert(student);
 	}
 	
 	public Student insert(Student student) {
-		int id = ++nextId;
+		//int newId = nextId++;
+		int newId = nextId.incrementAndGet();
 		
-		Student ns = new Student(id, student.getName(), student.getStatus());
+		//Student newStudent = new Student(newId, student.getName(), student.getStatus());
+		Student newStudent = new StudentBuilder().name(student.getName())
+				.status(student.getStatus()).build();
 		
+		students.add(newStudent);
 		
-		students.add(ns);
-		
-		return student;
+		return newStudent;
 	}
 	
 	public List<Student> selectAll() {
