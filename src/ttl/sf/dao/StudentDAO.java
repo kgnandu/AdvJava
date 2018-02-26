@@ -24,6 +24,9 @@ public class StudentDAO {
 		student = new Student("Anjana", Student.Status.HIBERNATING);
 		insert(student);
 
+		student = new Student("Andy", Student.Status.HIBERNATING);
+		insert(student);
+
 		student = new Student("Roshan", Student.Status.PART_TIME);
 		insert(student);
 	}
