@@ -3,16 +3,14 @@ package ttl.sf.app;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import ttl.sf.domain.Student;
 import ttl.sf.service.StudentService;
 
-public class RegApp {
+public class RegAppMap {
 
 	public static void main(String[] args) {
-		RegApp ra = new RegApp();
+		RegAppMap ra = new RegAppMap();
 		ra.go();
 	}
 
@@ -21,27 +19,18 @@ public class RegApp {
 
 		List<Student> students = studentService.getAllStudents();
 		
-		Stream<Student> s1 = students.stream();
-		Stream<Student> s2 = s1.filter(s -> s.getName().startsWith("M"));
-		Stream<String> s3 = s2.map(s -> s.getName());
+		List<String> result = getStudentNames(students);
 		
-		List<String> r = s3.collect(Collectors.toList());
+		Extract<Student, String> nameExtractor = new NameExtractor();
+		//List<String> result2 = getPropertyListGen(students, nameExtractor);
+		List<String> result2 = getPropertyListFun(students, (s) -> s.getName());
 		
-		Stream<String> nameWithM = students.stream()
-				.peek(s -> System.out.println("Peek1 " + s))
-				.filter(s -> s.getName().startsWith("M"))
-				.peek(s -> System.out.println("Peek2 " + s))
-				.map(s -> s.getName())
-				.peek(s -> System.out.println("Peek3 " + s));
-		
-				//.collect(Collectors.toList());
-		
-		
-		nameWithM.forEach(s -> System.out.println(s));
+		Extract<Student, Integer> idExtractor = new IdExtractor();
 
-		nameWithM.forEach(s -> System.out.println(s));
-		
-		
+		//List<Integer> ids = getPropertyListGen(students, idExtractor);
+		List<Integer> ids = getPropertyListFun(students, (s) -> s.getId());
+
+		ids.forEach(s -> System.out.println(s));
 	}
 	
 	public <T, R> List<R> getPropertyListFun(List<T> input, Function<T, R> extractor) {

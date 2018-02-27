@@ -38,9 +38,8 @@ public class RegAppPredicate {
 		});
 		
 		Predicate<Student> ps3 = (s) -> s.getName().startsWith("M");
-		Predicate<Student> ps4 = ps3.and((s) -> s.getName().length() > 5);
 
-		List<Student> result = filter(students, ps4);
+		List<Student> result = filter(students, (s) -> s.getName().startsWith("M"));
 
 		//List<Student> result3 = filter(students, s -> s.getName().startsWith("M"));
 		
@@ -49,6 +48,18 @@ public class RegAppPredicate {
 
 	}
 	
+
+	public <T> List<T> filter(List<T> input, Predicate<T> checker) {
+		List<T> result = new ArrayList<>();
+		for(T s : input) {
+			if(checker.test(s)) {
+				result.add(s);
+			}
+		}
+		
+		return result;
+	}
+
 	public <T> List<T> filter(List<T> input, List<Predicate<T>> checker) {
 		//Or the predicates
 		Predicate<T> last = (s) -> false;
@@ -63,18 +74,6 @@ public class RegAppPredicate {
 		
 		return result;
 	}
-
-	public <T> List<T> filter(List<T> input, Predicate<T> checker) {
-		List<T> result = new ArrayList<>();
-		for(T s : input) {
-			if(checker.test(s)) {
-				result.add(s);
-			}
-		}
-		
-		return result;
-	}
-
 	public interface Checker<T> {
 		public boolean check(T s);
 	}
