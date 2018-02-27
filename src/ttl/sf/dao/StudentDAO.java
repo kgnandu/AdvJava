@@ -18,6 +18,9 @@ public class StudentDAO {
 		Student student = new Student("Manoj", Student.Status.FULL_TIME);
 		insert(student);
 
+		student = new Student("Manojaswamy", Student.Status.FULL_TIME);
+		insert(student);
+
 		student = new Student("Charlie", Student.Status.FULL_TIME);
 		insert(student);
 

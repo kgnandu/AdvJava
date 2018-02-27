@@ -3,6 +3,7 @@ package ttl.sf.app;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ttl.sf.domain.Student;
 import ttl.sf.service.StudentService;
@@ -30,6 +31,9 @@ public class RegAppSorter {
 				return first.getName().compareTo(second.getName());
 			}
 		});
+		
+		Comparator<Student> cs = Comparator.comparing(Student::getName);
+		cs = cs.thenComparing(Student::getId);
 
 		Collections.sort(students, (first, second) -> {
 			return first.getName().compareTo(second.getName());	
