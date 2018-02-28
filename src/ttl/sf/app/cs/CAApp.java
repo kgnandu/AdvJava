@@ -44,7 +44,7 @@ public class CAApp {
 			cs1.size += cs2.size;
 		};
 		
-		CustomStatistics cs = data.stream()
+		CustomStatistics cs = data.stream().parallel()
 				.collect(sup, acc, comb);
 		
 		System.out.println(cs);

@@ -33,12 +33,12 @@ public class WordCounter {
 
 	public static void countWords(String sourceFile) throws IOException {
 
-		Map<String, Long> result = Files.lines(Paths.get(sourceFile)).parallel()
+		Map<String, Long> result = Files.lines(Paths.get(sourceFile))
+				.filter(s -> s.matches("^\\w.*")) // get rid of any empty lines
 				.flatMap(s -> Arrays.stream(s.split("\\W"))) // convert all
 																// streamed
 																// arrays into
 																// one stream
-				.filter(s -> s.matches("^\\w.*")) // get rid of any empty lines
 				.map(s -> s.toLowerCase())
 				// now make a map, using the string itself as a key,
 				// creating a new TreeMap to hold the result (will be sorted by
@@ -50,9 +50,29 @@ public class WordCounter {
 				// result in a Map of <Word, Num Of Occurrences>
 				.collect(
 						Collectors.groupingBy(s -> s,
-								() -> new TreeMap<String, Long>(),
+								TreeMap::new,
 								Collectors.counting()));
 		
-		result.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
+	
+		Comparator<String> comp = (left, right) -> {
+			Long v1 = result.get(left);
+			Long v2 = result.get(right);
+			
+			int i = v1.compareTo(v2);
+			
+			/*
+			if(i == 0) {
+				i = left.compareTo(right);
+			}
+			*/
+			
+			return i;
+		};
+		
+		Map<String, Long> byValue = new TreeMap<>(comp);
+		byValue.putAll(result);
+
+		byValue.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
+		
 	}
 }
