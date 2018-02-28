@@ -1,6 +1,7 @@
 package ttl.sf.app;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -29,6 +30,11 @@ public class RegAppMap {
 
 		//List<Integer> ids = getPropertyListGen(students, idExtractor);
 		List<Integer> ids = getPropertyListFun(students, (s) -> s.getId());
+		
+		List<String> ls = Arrays.asList("one", "two", "three");
+		
+		List<String> lengths = getPropertyListFun(ls, (s) -> s.toUpperCase());
+				
 
 		ids.forEach(s -> System.out.println(s));
 	}

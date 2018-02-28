@@ -2,7 +2,10 @@ package ttl.sf.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,10 +16,41 @@ public class RegApp {
 
 	public static void main(String[] args) {
 		RegApp ra = new RegApp();
-		ra.go();
+		//ra.goReduce(10);
+		
+		Supplier<Integer> s = ra.supplierFactory(35);
+		Supplier<Integer> s2 = ra.supplierFactory(100);
+		
+		System.out.println(s.get());
+		System.out.println(s2.get());
+	}
+	
+	public Supplier<Integer> supplierFactory(int val) {
+		Supplier<Integer> supplier = () -> {
+			return val;
+		};
+
+		return supplier;
 	}
 
-	public void go() {
+	public void goReduce(int val) {
+		StudentService studentService = new StudentService();
+
+		List<Student> students = studentService.getAllStudents();
+		
+		long l = students.stream()
+				.filter(s -> s.getName().startsWith("M"))
+				.map(s -> s.getName().length())
+				//.reduce(0, (accum, next) -> accum + next);
+				.reduce(val, (accum, next) -> {
+					return accum + next;
+				});
+
+		System.out.println("result = " + l);
+		
+	}
+	
+	public void go2() {
 		StudentService studentService = new StudentService();
 
 		List<Student> students = studentService.getAllStudents();
@@ -27,96 +61,51 @@ public class RegApp {
 		
 		List<String> r = s3.collect(Collectors.toList());
 		
-		Stream<String> nameWithM = students.stream()
-				.peek(s -> System.out.println("Peek1 " + s))
-				.filter(s -> s.getName().startsWith("M"))
-				.peek(s -> System.out.println("Peek2 " + s))
-				.map(s -> s.getName())
-				.peek(s -> System.out.println("Peek3 " + s));
+		Supplier<List<Student>> listSupplier = () -> { return new ArrayList<>();};
+		//Supplier<List<Student>> listSupplier = ArrayList::new;
 		
-				//.collect(Collectors.toList());
+		BiConsumer<List<Student>, Student> accumulator = (list, currStudent) -> list.add(currStudent);
 		
+		BiConsumer<List<Student>, List<Student>> combiner = (list1, list2) -> list1.addAll(list2);
 		
-		nameWithM.forEach(s -> System.out.println(s));
+		List<Student> result = students.stream()
+				//.filter(s -> s.getName().startsWith("M"))
+				.filter(this::byFirstName)
+				//.collect(listSupplier, accumulator, combiner);
+				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-		nameWithM.forEach(s -> System.out.println(s));
+		Map<Character, Long> mapResult = students.stream()
+				.collect(Collectors.groupingBy((s) -> s.getName().charAt(0), Collectors.counting())
+			);
+
 		
 		
+		Map<Integer, Student> mapStudents = students.stream()
+				.collect(Collectors.toMap(Student::getId, Function.identity()));
+				//.collect(Collectors.toMap(s -> s.getId(), s -> s));
+		
+		
+		
+		/*
+		Map<Integer, Student> mapResult = students.stream()
+				.collect(Collectors.groupingBy((s) -> s.getName().charAt(0), Collectors.m
+			);
+			*/
+		
+		
+		
+		mapStudents.forEach((k, v) -> System.out.printf("k = %d, v = %s%n", k, v));
+
 	}
 	
-	public <T, R> List<R> getPropertyListFun(List<T> input, Function<T, R> extractor) {
-		List<R> result = new ArrayList<>();
+	public boolean  byFirstName(Student s) {
 		
-		for(T s : input) {
-			result.add(extractor.apply(s));
-		}
-		
-		return result;
+		return true;
 	}
 
-	public interface Extract<T, R> {
-		public R getProperty(T s);
-	}
-
-	public <T, R> List<R> getPropertyListGen(List<T> input, Extract<T, R> extractor) {
-		List<R> result = new ArrayList<>();
-		
-		for(T s : input) {
-			result.add(extractor.getProperty(s));
-		}
-		
-		return result;
+	public void myPrettyPrint(Student s) {
+		System.out.println("Whoo hoo" + s);
 	}
 	
-	
-	public List<String> getPropertyList(List<Student> input, Extract<Student, String> extractor) {
-		List<String> result = new ArrayList<>();
-		
-		for(Student s : input) {
-			result.add(extractor.getProperty(s));
-		}
-		
-		return result;
-	}
-	
-	public class NameExtractor implements Extract<Student, String>
-	{
-
-		@Override
-		public String getProperty(Student s) {
-			return s.getName();
-		}
-		
-	}
-
-	public class IdExtractor implements Extract<Student, Integer>
-	{
-
-		@Override
-		public Integer getProperty(Student s) {
-			return s.getId();
-		}
-		
-	}
-	
-	public List<String> getStudentNames(List<Student> input) {
-		List<String> result = new ArrayList<>();
-		
-		for(Student s : input) {
-			result.add(s.getName());
-		}
-		
-		return result;
-	}
-
-	public List<Integer> getStudentIds(List<Student> input) {
-		List<Integer> result = new ArrayList<>();
-		
-		for(Student s : input) {
-			result.add(s.getId());
-		}
-		
-		return result;
-	}
 }
 
